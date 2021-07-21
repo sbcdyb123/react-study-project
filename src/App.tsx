@@ -1,6 +1,11 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React from "react";
+import logo from "./logo.svg";
+import "./App.css";
+var a = 1;
+function b() {
+  a = 1 + 2;
+}
+console.log(b());
 
 function App() {
   return (
