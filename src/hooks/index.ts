@@ -7,7 +7,7 @@ import { useEffect, useState } from 'react'
  * @param {function} callback
  * @return {*}
  */
-export const useMount = (callback) => {
+export const useMount = (callback: () => void) => {
   useEffect(() => {
     callback()
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -21,7 +21,7 @@ export const useMount = (callback) => {
  * @param {number} delay 延迟毫秒
  * @return {any}
  */
-export const useDebounce = (value, delay) => {
+export const useDebounce = (value: unknown, delay = 500) => {
   const [debounceValue, setBebounceValue] = useState(value)
   useEffect(() => {
     // 每次在value变化以后，设置一个定时器
