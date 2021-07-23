@@ -1,8 +1,10 @@
-import React from 'react'
-import { ProjectListScreen } from 'screens/ProjectList'
+import { AuthenticatedApp } from 'AuthenticatedApp'
+import { useAuth } from 'context/AuthContext'
+import { UnauthenticatedApp } from 'unauthenticated-app'
 
 function App() {
-  return <ProjectListScreen />
+  const { user } = useAuth()
+  return <div>{user ? <AuthenticatedApp /> : <UnauthenticatedApp />}</div>
 }
 
 export default App

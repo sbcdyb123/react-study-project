@@ -10,6 +10,7 @@
     "@types/node": "^12.0.0",
     "@types/react": "^17.0.0",
     "@types/react-dom": "^17.0.0",
+    "jira-dev-tool": "^1.7.61",
     "lodash": "^4.17.21",
     "qs": "^6.10.1",
     "react": "^17.0.2",
@@ -24,7 +25,7 @@
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "prepare": "husky install",
-    "mock": "json-server __json_server_mock__/db.json --watch --port 3001"
+    "mock": "json-server __json_server_mock__/db.json --watch --port 3001 --middlewares ./__json_server_mock__/middlewares/index.js"
   },
   "eslintConfig": {
     "extends": [
@@ -58,5 +59,8 @@
   },
   "lint-staged": {
     "*.{js,css,md,ts,tsx}": "prettier --write"
+  },
+  "msw": {
+    "workerDirectory": "public"
   }
 }
