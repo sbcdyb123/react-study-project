@@ -21,7 +21,7 @@ export const useMount = (callback: () => void) => {
  * @param {number} delay 延迟毫秒
  * @return {any}
  */
-export const useDebounce = (value: unknown, delay = 500) => {
+export const useDebounce = <T>(value: T, delay = 500) => {
   const [debounceValue, setBebounceValue] = useState(value)
   useEffect(() => {
     // 每次在value变化以后，设置一个定时器

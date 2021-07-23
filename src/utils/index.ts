@@ -7,7 +7,8 @@ import { cloneDeep } from 'lodash'
  * @param {unknown} value 传入需要判断的值
  * @return {boolean}
  */
-export const isFalsy = (value: unknown) => (value === 0 ? false : !value)
+export const isFalsy = (value: unknown): boolean =>
+  value === 0 ? false : !value
 /*******
  * @Date: 2021-07-22 22:57:19
  * @name: 方龙
