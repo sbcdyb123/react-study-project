@@ -1,6 +1,8 @@
 import * as auth from 'authProvider'
+import { useMount } from 'hooks'
 import React, { ReactNode, useContext, useState } from 'react'
 import { User } from 'screens/ProjectList/SearchPanel'
+import { http } from 'utils/http'
 type AuthContextType =
   | {
       user: User | null
@@ -9,6 +11,15 @@ type AuthContextType =
       loginout: () => void
     }
   | undefined
+const bootstrapUser = async () => {
+  let user = null
+  const token = auth.getToken()
+  if (token) {
+    const data = await http('me', { token })
+    user = data.user
+  }
+  return user
+}
 const AuthContext = React.createContext<AuthContextType>(undefined)
 AuthContext.displayName = 'AuthContext'
 
@@ -25,6 +36,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       setUser(null)
     })
   }
+  useMount(() => {
+    bootstrapUser().then(setUser)
+  })
   return (
     <AuthContext.Provider
       value={{ user, login, loginout, register }}
