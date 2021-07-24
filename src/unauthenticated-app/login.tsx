@@ -1,3 +1,4 @@
+import styled from '@emotion/styled'
 import { Button, Form, Input } from 'antd'
 import { LoginParam } from 'authProvider'
 import { useAuth } from 'context/AuthContext'
@@ -22,10 +23,14 @@ export const LoginScreen = () => {
         <Input.Password placeholder="密码" />
       </Form.Item>
       <Form.Item>
-        <Button type="primary" htmlType="submit">
+        <LongButton type="primary" htmlType="submit">
           登录
-        </Button>
+        </LongButton>
       </Form.Item>
     </Form>
   )
 }
+
+const LongButton = styled(Button)`
+  width: 100%;
+`
