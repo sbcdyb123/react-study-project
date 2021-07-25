@@ -2,11 +2,21 @@ import styled from '@emotion/styled'
 import { Button, Form, Input } from 'antd'
 import { LoginParam } from 'authProvider'
 import { useAuth } from 'context/AuthContext'
+import { useAsync } from 'hooks'
 
-export const LoginScreen = () => {
+export const LoginScreen = ({
+  onError,
+}: {
+  onError: (error: Error) => void
+}) => {
   const { login } = useAuth()
-  const handleSubmit = ({ username, password }: LoginParam) => {
-    login({ username, password })
+  const { run, isLoading } = useAsync(undefined, { throwOnError: true })
+  const handleSubmit = async ({ username, password }: LoginParam) => {
+    try {
+      await run(login({ username, password }))
+    } catch (error) {
+      onError(error)
+    }
   }
   return (
     <Form onFinish={handleSubmit}>
@@ -23,7 +33,7 @@ export const LoginScreen = () => {
         <Input.Password placeholder="密码" />
       </Form.Item>
       <Form.Item>
-        <LongButton type="primary" htmlType="submit">
+        <LongButton loading={isLoading} type="primary" htmlType="submit">
           登录
         </LongButton>
       </Form.Item>

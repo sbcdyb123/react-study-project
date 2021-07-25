@@ -31,7 +31,7 @@ export const login = (data: LoginParam) => {
     if (response.ok) {
       return handleUserResponse(await response.json())
     } else {
-      return Promise.reject(data)
+      return Promise.reject(await response.json())
     }
   })
 }
@@ -53,7 +53,7 @@ export const register = (data: LoginParam) => {
     if (response.ok) {
       return handleUserResponse(await response.json())
     } else {
-      return Promise.reject(data)
+      return Promise.reject(await response.json())
     }
   })
 }
