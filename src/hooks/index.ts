@@ -1,4 +1,5 @@
-import { useEffect, useState } from 'react'
+import { doc } from 'prettier'
+import { useEffect, useRef, useState } from 'react'
 
 /*******
  * @Date: 2021-07-22 23:16:15
@@ -100,4 +101,18 @@ export const useAsync = <D>(
     setError,
     ...state,
   }
+}
+
+export const useDocumentTitle = (title: string, keepOnUnmount = true) => {
+  const oldTitle = useRef(document.title).current
+  useEffect(() => {
+    document.title = title
+  }, [title])
+  useEffect(() => {
+    return () => {
+      if (!keepOnUnmount) {
+        document.title = oldTitle
+      }
+    }
+  }, [keepOnUnmount, oldTitle])
 }
