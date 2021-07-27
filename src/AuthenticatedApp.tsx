@@ -4,6 +4,14 @@ import { Row } from 'components/lib'
 import { useAuth } from 'context/AuthContext'
 import { ProjectListScreen } from 'screens/ProjectList'
 import { ReactComponent as SoftwareLogo } from 'assets/software-logo.svg'
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Navigate,
+} from 'react-router-dom'
+import { ProjectScreen } from 'screens/Project'
+import { resetRoute } from 'utils'
 /**
  * grid 和 flex 各自的应用场景
  * 1. 要考虑，是一维布局 还是 二维布局
@@ -17,40 +25,57 @@ import { ReactComponent as SoftwareLogo } from 'assets/software-logo.svg'
  */
 
 export const AuthenticatedApp = () => {
-  const { loginout, user } = useAuth()
   return (
     <Container>
-      <PageHeader between={true}>
-        <HeaderLeft gap={true}>
-          <SoftwareLogo width="18rem" color="rgb(38,138,255)" />
-          <h3>项目</h3>
-          <h3>用户</h3>
-        </HeaderLeft>
-        <HeaderRight>
-          <Dropdown
-            overlay={
-              <Menu>
-                <Menu.Item key="loginout">
-                  <Button type="link" onClick={loginout}>
-                    登出
-                  </Button>
-                </Menu.Item>
-              </Menu>
-            }
-          >
-            <Button type="link" onClick={(e) => e.preventDefault()}>
-              Hi, {user?.name}
-            </Button>
-          </Dropdown>
-          <Button type="primary" onClick={loginout}>
-            登出
-          </Button>
-        </HeaderRight>
-      </PageHeader>
+      <Header />
       <Main>
-        <ProjectListScreen />
+        {/* <ProjectListScreen /> */}
+        <Router>
+          <Routes>
+            <Route path={'/projects'} element={<ProjectListScreen />} />
+            <Route
+              path={'/projects/:projectId/*'}
+              element={<ProjectScreen />}
+            />
+            <Navigate to={'/projects'} />
+          </Routes>
+        </Router>
       </Main>
     </Container>
+  )
+}
+const Header = () => {
+  const { loginout, user } = useAuth()
+  return (
+    <PageHeader between={true}>
+      <HeaderLeft gap={true}>
+        <Button type="link" onClick={resetRoute}>
+          <SoftwareLogo width="18rem" color="rgb(38,138,255)" />
+        </Button>
+        <h3>项目</h3>
+        <h3>用户</h3>
+      </HeaderLeft>
+      <HeaderRight>
+        <Dropdown
+          overlay={
+            <Menu>
+              <Menu.Item key="loginout">
+                <Button type="link" onClick={loginout}>
+                  登出
+                </Button>
+              </Menu.Item>
+            </Menu>
+          }
+        >
+          <Button type="link" onClick={(e) => e.preventDefault()}>
+            Hi, {user?.name}
+          </Button>
+        </Dropdown>
+        <Button type="primary" onClick={loginout}>
+          登出
+        </Button>
+      </HeaderRight>
+    </PageHeader>
   )
 }
 const Container = styled.div`

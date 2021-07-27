@@ -1,5 +1,6 @@
-import { doc } from 'prettier'
-import { useEffect, useRef, useState } from 'react'
+import { cleanObject } from './../utils/index'
+import { useEffect, useMemo, useRef, useState } from 'react'
+import { URLSearchParamsInit, useSearchParams } from 'react-router-dom'
 
 /*******
  * @Date: 2021-07-22 23:16:15
@@ -115,4 +116,33 @@ export const useDocumentTitle = (title: string, keepOnUnmount = true) => {
       }
     }
   }, [keepOnUnmount, oldTitle])
+}
+
+/**
+ * @Date: 2021-07-26 22:13:01
+ * @name: 方龙
+ * @description: 返回页面url中，指定键的参数值
+ * @param {*}
+ * @return {*}
+ */
+export const useUrlQueryParam = <K extends string>(keys: K[]) => {
+  const [searchParams, setSearchParams] = useSearchParams()
+  return [
+    useMemo(
+      () =>
+        keys.reduce((prev, key) => {
+          return { ...prev, [key]: searchParams.get(key) || '' }
+        }, {} as { [key in K]: string }),
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+      [searchParams],
+    ),
+    (params: Partial<{ [key in K]: unknown }>) => {
+      const obj = cleanObject({
+        ...Object.fromEntries(searchParams),
+        ...params,
+      }) as URLSearchParamsInit
+      return setSearchParams(obj)
+    },
+  ] as const
+  // as const 返回元组类型
 }

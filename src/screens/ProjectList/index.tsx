@@ -1,16 +1,12 @@
-import { List, Project } from './List'
+import { List } from './List'
 import { SearchPanel } from './SearchPanel'
-import { useState } from 'react'
-import { useDebounce, useDocumentTitle } from 'hooks'
+import { useDebounce, useDocumentTitle, useUrlQueryParam } from 'hooks'
 import styled from '@emotion/styled'
 import { useProjects } from 'hooks/useProject'
 import { useUser } from 'hooks/useUser'
 // import { Helmet } from 'react-helmet'
 export const ProjectListScreen = () => {
-  const [param, setParam] = useState<Partial<Project>>({
-    name: '',
-    personId: '',
-  })
+  const [param, setParam] = useUrlQueryParam(['name', 'personId'])
   const debounceParam = useDebounce(param)
   const { isLoading, error, data: list } = useProjects(debounceParam)
   const { data: users } = useUser()
@@ -35,6 +31,7 @@ export const ProjectListScreen = () => {
     </Container>
   )
 }
+ProjectListScreen.whyDidYouRender = true
 const Container = styled.div`
   padding: 3.2rem;
 `
