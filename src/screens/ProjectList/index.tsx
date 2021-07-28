@@ -1,16 +1,16 @@
 import { List } from './List'
 import { SearchPanel } from './SearchPanel'
-import { useDebounce, useDocumentTitle, useUrlQueryParam } from 'hooks'
+import { useDebounce, useDocumentTitle } from 'hooks'
 import styled from '@emotion/styled'
 import { useProjects } from 'hooks/useProject'
 import { useUser } from 'hooks/useUser'
+import { useProjectsSearchParams } from './utils'
 // import { Helmet } from 'react-helmet'
 export const ProjectListScreen = () => {
-  const [param, setParam] = useUrlQueryParam(['name', 'personId'])
-  const debounceParam = useDebounce(param)
-  const { isLoading, error, data: list } = useProjects(debounceParam)
-  const { data: users } = useUser()
   useDocumentTitle('项目列表', false)
+  const [param, setParam] = useProjectsSearchParams()
+  const { isLoading, error, data: list } = useProjects(useDebounce(param))
+  const { data: users } = useUser()
   return (
     <Container>
       {/* <Helmet>
