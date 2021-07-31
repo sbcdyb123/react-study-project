@@ -1,5 +1,5 @@
 import styled from '@emotion/styled'
-import { Spin, Typography } from 'antd'
+import { Button, Spin, Typography } from 'antd'
 import { DevTools } from 'jira-dev-tool'
 export const FullPageFallback = ({ error }: { error: Error | null }) => {
   return (
@@ -39,4 +39,7 @@ export const Row = styled.div<{
         ? '2rem'
         : undefined};
   }
+`
+export const ButtonNoPadding = styled(Button)`
+  padding: 0;
 `

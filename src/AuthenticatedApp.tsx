@@ -1,6 +1,6 @@
 import styled from '@emotion/styled'
 import { Button, Dropdown, Menu } from 'antd'
-import { Row } from 'components/lib'
+import { ButtonNoPadding, Row } from 'components/lib'
 import { useAuth } from 'context/AuthContext'
 import { ProjectListScreen } from 'screens/ProjectList'
 import { ReactComponent as SoftwareLogo } from 'assets/software-logo.svg'
@@ -12,6 +12,9 @@ import {
 } from 'react-router-dom'
 import { ProjectScreen } from 'screens/Project'
 import { resetRoute } from 'utils'
+import { useState } from 'react'
+import { ProjectModal } from 'screens/ProjectList/ProjectModal'
+import { ProjectPopover } from 'components/ProjectPopover'
 /**
  * grid 和 flex 各自的应用场景
  * 1. 要考虑，是一维布局 还是 二维布局
@@ -25,14 +28,20 @@ import { resetRoute } from 'utils'
  */
 
 export const AuthenticatedApp = () => {
+  const [projectModalOpen, setProjectModalOpen] = useState(false)
   return (
     <Container>
-      <Header />
+      <Header setProjectModalOpen={setProjectModalOpen} />
       <Main>
         {/* <ProjectListScreen /> */}
         <Router>
           <Routes>
-            <Route path={'/projects'} element={<ProjectListScreen />} />
+            <Route
+              path={'/projects'}
+              element={
+                <ProjectListScreen setProjectModalOpen={setProjectModalOpen} />
+              }
+            />
             <Route
               path={'/projects/:projectId/*'}
               element={<ProjectScreen />}
@@ -41,41 +50,48 @@ export const AuthenticatedApp = () => {
           </Routes>
         </Router>
       </Main>
+      <ProjectModal
+        projectModalOpen={projectModalOpen}
+        onClose={() => setProjectModalOpen(false)}
+      />
     </Container>
   )
 }
-const Header = () => {
-  const { loginout, user } = useAuth()
+const Header = (props: { setProjectModalOpen: (isOpen: boolean) => void }) => {
   return (
     <PageHeader between={true}>
       <HeaderLeft gap={true}>
-        <Button type="link" onClick={resetRoute}>
+        <ButtonNoPadding type="link" onClick={resetRoute}>
           <SoftwareLogo width="18rem" color="rgb(38,138,255)" />
-        </Button>
-        <h3>项目</h3>
-        <h3>用户</h3>
+        </ButtonNoPadding>
+        {/* <h3>项目</h3> */}
+        <ProjectPopover setProjectModalOpen={props.setProjectModalOpen} />
+        <span>用户</span>
       </HeaderLeft>
       <HeaderRight>
-        <Dropdown
-          overlay={
-            <Menu>
-              <Menu.Item key="loginout">
-                <Button type="link" onClick={loginout}>
-                  登出
-                </Button>
-              </Menu.Item>
-            </Menu>
-          }
-        >
-          <Button type="link" onClick={(e) => e.preventDefault()}>
-            Hi, {user?.name}
-          </Button>
-        </Dropdown>
-        <Button type="primary" onClick={loginout}>
-          登出
-        </Button>
+        <User />
       </HeaderRight>
     </PageHeader>
+  )
+}
+const User = () => {
+  const { loginout, user } = useAuth()
+  return (
+    <Dropdown
+      overlay={
+        <Menu>
+          <Menu.Item key="loginout">
+            <Button type="link" onClick={loginout}>
+              登出
+            </Button>
+          </Menu.Item>
+        </Menu>
+      }
+    >
+      <Button type="link" onClick={(e) => e.preventDefault()}>
+        Hi, {user?.name}
+      </Button>
+    </Dropdown>
   )
 }
 const Container = styled.div`
