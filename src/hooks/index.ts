@@ -60,6 +60,7 @@ export const useAsync = <D>(
     ...defalutInitialState,
     ...initialState,
   })
+  const mountedRef = useMountedRef()
   const [retry, setRetry] = useState(() => () => {})
   const config = { ...defaultConfig, ...initialConfig }
   const setData = (data: D) => {
@@ -92,7 +93,9 @@ export const useAsync = <D>(
     setState({ ...state, stat: 'loading' })
     return promise
       .then((data) => {
-        setData(data)
+        if (mountedRef.current) {
+          setData(data)
+        }
         return data
       })
       .catch((error) => {
@@ -155,4 +158,14 @@ export const useUrlQueryParam = <K extends string>(keys: K[]) => {
     },
   ] as const
   // as const 返回元组类型
+}
+export const useMountedRef = () => {
+  const mountedRef = useRef(false)
+  useEffect(() => {
+    mountedRef.current = true
+    return () => {
+      mountedRef.current = false
+    }
+  })
+  return mountedRef
 }
