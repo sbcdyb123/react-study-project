@@ -7,8 +7,12 @@ import { cleanObject } from 'utils'
 export const useProjects = (param?: Partial<Project>) => {
   const http = useHttp()
   const { run, ...result } = useAsync<Project[]>()
+  const fetchProjects = () =>
+    http('projects', { data: cleanObject(param || {}) })
   useEffect(() => {
-    run(http('projects', { data: cleanObject(param || {}) }))
+    run(fetchProjects(), {
+      retry: fetchProjects,
+    })
     // eslint-disable-next-line
   }, [param])
   return result
