@@ -1,6 +1,7 @@
 import { loginout } from 'authProvider'
 import { useAuth } from 'context/AuthContext'
 import { stringify } from 'qs'
+import { useCallback } from 'react'
 
 const apiUrl = process.env.REACT_APP_API_URL
 interface Config extends RequestInit {
@@ -41,6 +42,9 @@ export const http = async (
 
 export const useHttp = () => {
   const { user } = useAuth()
-  return (...[url, config]: Parameters<typeof http>) =>
-    http(url, { ...config, token: user?.token })
+  return useCallback(
+    (...[url, config]: Parameters<typeof http>) =>
+      http(url, { ...config, token: user?.token }),
+    [user?.token],
+  )
 }
