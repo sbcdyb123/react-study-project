@@ -1,5 +1,12 @@
 import { cleanObject } from './../utils/index'
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import {
+  useCallback,
+  useEffect,
+  useMemo,
+  useReducer,
+  useRef,
+  useState,
+} from 'react'
 import { URLSearchParamsInit, useSearchParams } from 'react-router-dom'
 
 /*******
@@ -52,31 +59,47 @@ const defalutInitialState: State<null> = {
 const defaultConfig = {
   throwOnError: false,
 }
+const useSafeDispatch = <T>(dispatch: (...args: T[]) => void) => {
+  const mountedRef = useMountedRef()
+  return useCallback(
+    (...args: T[]) => (mountedRef.current ? dispatch(...args) : void 0),
+    [dispatch, mountedRef],
+  )
+}
 export const useAsync = <D>(
   initialState?: State<D>,
   initialConfig?: typeof defaultConfig,
 ) => {
-  const [state, setState] = useState<State<D>>({
-    ...defalutInitialState,
-    ...initialState,
-  })
-  const mountedRef = useMountedRef()
+  const [state, dispatch] = useReducer(
+    (state: State<D>, action: Partial<State<D>>) => ({ ...state, ...action }),
+    {
+      ...defalutInitialState,
+      ...initialState,
+    },
+  )
+  const safeDispatch = useSafeDispatch(dispatch)
   const [retry, setRetry] = useState(() => () => {})
   const config = { ...defaultConfig, ...initialConfig }
-  const setData = useCallback((data: D) => {
-    setState({
-      data,
-      stat: 'success',
-      error: null,
-    })
-  }, [])
-  const setError = useCallback((error: Error) => {
-    setState({
-      data: null,
-      stat: 'error',
-      error,
-    })
-  }, [])
+  const setData = useCallback(
+    (data: D) => {
+      safeDispatch({
+        data,
+        stat: 'success',
+        error: null,
+      })
+    },
+    [safeDispatch],
+  )
+  const setError = useCallback(
+    (error: Error) => {
+      safeDispatch({
+        data: null,
+        stat: 'error',
+        error,
+      })
+    },
+    [safeDispatch],
+  )
   // 用来触发异步请求
   const run = useCallback(
     (promise: Promise<D>, runConfig?: { retry: () => Promise<D> }) => {
@@ -88,12 +111,10 @@ export const useAsync = <D>(
           run(runConfig?.retry(), runConfig)
         }
       })
-      setState((prevState) => ({ ...prevState, stat: 'loading' }))
+      safeDispatch({ stat: 'loading' })
       return promise
         .then((data) => {
-          if (mountedRef.current) {
-            setData(data)
-          }
+          setData(data)
           return data
         })
         .catch((error) => {
@@ -102,7 +123,7 @@ export const useAsync = <D>(
           return error
         })
     },
-    [config.throwOnError, mountedRef, setData, setError],
+    [config.throwOnError, safeDispatch, setData, setError],
   )
   return {
     isIdle: state.stat === 'idle',

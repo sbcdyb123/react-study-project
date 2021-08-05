@@ -5,11 +5,9 @@ import styled from '@emotion/styled'
 import { useProjects } from 'utils/project'
 import { useUser } from 'hooks/useUser'
 import { useProjectsSearchParams } from './utils'
-import { Button, Row } from 'antd'
+import { Row } from 'antd'
 // import { Helmet } from 'react-helmet'
-export const ProjectListScreen = (props: {
-  setProjectModalOpen: (isOpen: boolean) => void
-}) => {
+export const ProjectListScreen = (props: { projectButton: JSX.Element }) => {
   useDocumentTitle('项目列表', false)
   const [param, setParam] = useProjectsSearchParams()
   const {
@@ -26,9 +24,7 @@ export const ProjectListScreen = (props: {
       </Helmet> */}
       <Row justify="space-between">
         <span>项目列表</span>
-        <Button type="default" onClick={() => props.setProjectModalOpen(true)}>
-          创建项目
-        </Button>
+        {props.projectButton}
       </Row>
       {error?.message}
       <SearchPanel
@@ -37,7 +33,7 @@ export const ProjectListScreen = (props: {
         setParam={setParam}
       ></SearchPanel>
       <List
-        setProjectModalOpen={props.setProjectModalOpen}
+        projectButton={props.projectButton}
         refresh={retry}
         loading={isLoading}
         dataSource={list || []}
