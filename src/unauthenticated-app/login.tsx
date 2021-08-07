@@ -3,7 +3,6 @@ import { Button, Form, Input } from 'antd'
 import { LoginParam } from 'authProvider'
 import { useAuth } from 'context/AuthContext'
 import { useAsync } from 'hooks'
-
 export const LoginScreen = ({
   onError,
 }: {
