@@ -12,7 +12,6 @@ import {
 } from 'react-router-dom'
 import { ProjectScreen } from 'screens/Project'
 import { resetRoute } from 'utils'
-import { useState } from 'react'
 import { ProjectModal } from 'screens/ProjectList/ProjectModal'
 import { ProjectPopover } from 'components/ProjectPopover'
 /**
@@ -28,54 +27,27 @@ import { ProjectPopover } from 'components/ProjectPopover'
  */
 
 export const AuthenticatedApp = () => {
-  const [projectModalOpen, setProjectModalOpen] = useState(false)
   return (
     <Container>
-      <Header
-        projectButton={
-          <ButtonNoPadding
-            type="link"
-            onClick={() => setProjectModalOpen(true)}
-          >
-            创建项目
-          </ButtonNoPadding>
-        }
-      />
-      <Main>
-        {/* <ProjectListScreen /> */}
-        <Router>
+      <Router>
+        <Header />
+        <Main>
+          {/* <ProjectListScreen /> */}
           <Routes>
-            <Route
-              path={'/projects'}
-              element={
-                <ProjectListScreen
-                  projectButton={
-                    <ButtonNoPadding
-                      type="link"
-                      onClick={() => setProjectModalOpen(true)}
-                    >
-                      创建项目
-                    </ButtonNoPadding>
-                  }
-                />
-              }
-            />
+            <Route path={'/projects'} element={<ProjectListScreen />} />
             <Route
               path={'/projects/:projectId/*'}
               element={<ProjectScreen />}
             />
             <Navigate to={'/projects'} />
           </Routes>
-        </Router>
-      </Main>
-      <ProjectModal
-        projectModalOpen={projectModalOpen}
-        onClose={() => setProjectModalOpen(false)}
-      />
+        </Main>
+        <ProjectModal />
+      </Router>
     </Container>
   )
 }
-const Header = (props: { projectButton: JSX.Element }) => {
+const Header = () => {
   return (
     <PageHeader between={true}>
       <HeaderLeft gap={true}>
@@ -83,7 +55,7 @@ const Header = (props: { projectButton: JSX.Element }) => {
           <SoftwareLogo width="18rem" color="rgb(38,138,255)" />
         </ButtonNoPadding>
         {/* <h3>项目</h3> */}
-        <ProjectPopover {...props} />
+        <ProjectPopover />
         <span>用户</span>
       </HeaderLeft>
       <HeaderRight>

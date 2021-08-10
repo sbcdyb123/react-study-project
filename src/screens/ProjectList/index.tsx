@@ -4,10 +4,11 @@ import { useDebounce, useDocumentTitle } from 'hooks'
 import styled from '@emotion/styled'
 import { useProjects } from 'utils/project'
 import { useUser } from 'hooks/useUser'
-import { useProjectsSearchParams } from './utils'
+import { useProjectModal, useProjectsSearchParams } from './utils'
 import { Row } from 'antd'
+import { ButtonNoPadding } from 'components/lib'
 // import { Helmet } from 'react-helmet'
-export const ProjectListScreen = (props: { projectButton: JSX.Element }) => {
+export const ProjectListScreen = () => {
   useDocumentTitle('项目列表', false)
   const [param, setParam] = useProjectsSearchParams()
   const {
@@ -17,6 +18,7 @@ export const ProjectListScreen = (props: { projectButton: JSX.Element }) => {
     retry,
   } = useProjects(useDebounce(param))
   const { data: users } = useUser()
+  const { open } = useProjectModal()
   return (
     <Container>
       {/* <Helmet>
@@ -24,7 +26,9 @@ export const ProjectListScreen = (props: { projectButton: JSX.Element }) => {
       </Helmet> */}
       <Row justify="space-between">
         <span>项目列表</span>
-        {props.projectButton}
+        <ButtonNoPadding type="link" onClick={open}>
+          创建项目
+        </ButtonNoPadding>
       </Row>
       {error?.message}
       <SearchPanel
@@ -33,7 +37,6 @@ export const ProjectListScreen = (props: { projectButton: JSX.Element }) => {
         setParam={setParam}
       ></SearchPanel>
       <List
-        projectButton={props.projectButton}
         refresh={retry}
         loading={isLoading}
         dataSource={list || []}
