@@ -1,11 +1,12 @@
 import styled from '@emotion/styled'
 import { Button, Spin, Typography } from 'antd'
 import { DevTools } from 'jira-dev-tool'
+import { isError } from 'lodash'
 export const FullPageFallback = ({ error }: { error: Error | null }) => {
   return (
     <FullPage>
       <DevTools />
-      <Typography.Text type="danger">{error?.message}</Typography.Text>
+      <ErrorBox error={error} />
     </FullPage>
   )
 }
@@ -43,3 +44,9 @@ export const Row = styled.div<{
 export const ButtonNoPadding = styled(Button)`
   padding: 0;
 `
+export const ErrorBox = ({ error }: { error: unknown }) => {
+  if (isError(error)) {
+    return <Typography.Text type="danger">{error.message}</Typography.Text>
+  }
+  return null
+}

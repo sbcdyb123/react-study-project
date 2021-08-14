@@ -1,5 +1,5 @@
 import styled from '@emotion/styled'
-import { Card, Divider, Tag, Typography } from 'antd'
+import { Card, Divider, Tag } from 'antd'
 import { useState } from 'react'
 import { LoginScreen } from './login'
 import { RegisterScreen } from './register'
@@ -7,6 +7,7 @@ import logo from 'assets/logo.svg'
 import left from 'assets/left.svg'
 import right from 'assets/right.svg'
 import { useDocumentTitle } from 'hooks'
+import { ErrorBox } from 'components/lib'
 // import { Helmet } from 'react-helmet'
 export const UnauthenticatedApp = () => {
   const [isRegister, setIsRegister] = useState(false)
@@ -21,9 +22,7 @@ export const UnauthenticatedApp = () => {
       <Background />
       <ShadowCard>
         <Title>{isRegister ? '请注册' : '请登录'}</Title>
-        {error ? (
-          <Typography.Text type="danger">{error.message}</Typography.Text>
-        ) : null}
+        <ErrorBox error={error} />
         {isRegister ? (
           <RegisterScreen onError={setError} />
         ) : (

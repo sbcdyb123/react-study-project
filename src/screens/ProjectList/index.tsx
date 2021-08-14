@@ -6,17 +6,12 @@ import { useProjects } from 'utils/project'
 import { useUser } from 'hooks/useUser'
 import { useProjectModal, useProjectsSearchParams } from './utils'
 import { Row } from 'antd'
-import { ButtonNoPadding } from 'components/lib'
+import { ButtonNoPadding, ErrorBox } from 'components/lib'
 // import { Helmet } from 'react-helmet'
 export const ProjectListScreen = () => {
   useDocumentTitle('项目列表', false)
   const [param, setParam] = useProjectsSearchParams()
-  const {
-    isLoading,
-    error,
-    data: list,
-    retry,
-  } = useProjects(useDebounce(param))
+  const { isLoading, error, data: list } = useProjects(useDebounce(param))
   const { data: users } = useUser()
   const { open } = useProjectModal()
   return (
@@ -30,14 +25,13 @@ export const ProjectListScreen = () => {
           创建项目
         </ButtonNoPadding>
       </Row>
-      {error?.message}
       <SearchPanel
         users={users || []}
         param={param}
         setParam={setParam}
       ></SearchPanel>
+      <ErrorBox error={error} />
       <List
-        refresh={retry}
         loading={isLoading}
         dataSource={list || []}
         users={users || []}

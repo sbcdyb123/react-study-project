@@ -1,46 +1,41 @@
 import { useHttp } from 'utils/http'
-import { useAsync } from 'hooks'
-import { useCallback, useEffect } from 'react'
 import { Project } from 'screens/ProjectList/List'
-import { cleanObject } from 'utils'
+import { useMutation, useQuery, useQueryClient } from 'react-query'
 
 export const useProjects = (param?: Partial<Project>) => {
   const http = useHttp()
-  const { run, ...result } = useAsync<Project[]>()
-  const fetchProjects = useCallback(
-    () => http('projects', { data: cleanObject(param || {}) }),
-    [http, param],
+  return useQuery<Project[]>(['projects', param], () =>
+    http('projects', { data: param }),
   )
-  useEffect(() => {
-    run(fetchProjects(), {
-      retry: fetchProjects,
-    })
-  }, [fetchProjects, param, run])
-  return result
 }
 export const useEditProject = () => {
   const http = useHttp()
-  const { run, ...result } = useAsync()
-  const mutate = (params: Partial<Project>) => {
-    return run(
-      http(`projects/${params.id}`, {
-        data: params,
+  const queryClient = useQueryClient()
+  return useMutation(
+    (params: Partial<Project>) =>
+      http(`project/${params.id}`, {
         method: 'PATCH',
+        data: params,
       }),
-    )
-  }
-  return { mutate, ...result }
+    { onSuccess: () => queryClient.invalidateQueries('projects') },
+  )
 }
 export const useAddProject = () => {
   const http = useHttp()
-  const { run, ...result } = useAsync()
-  const mutate = (params: Partial<Project>) => {
-    return run(
-      http(`projects/${params.id}`, {
+  const queryClient = useQueryClient()
+  return useMutation(
+    (params: Partial<Project>) =>
+      http(`projects`, {
         data: params,
         method: 'POST',
       }),
-    )
-  }
-  return { mutate, ...result }
+    { onSuccess: () => queryClient.invalidateQueries('projects') },
+  )
+}
+
+export const useProject = (id: number) => {
+  const http = useHttp()
+  return useQuery<Project>(['project', { id }], () => http(`projects/${id}`), {
+    enabled: !!id,
+  })
 }
