@@ -4,14 +4,18 @@ import { ErrorBox } from 'components/lib'
 import { UserSelect } from 'components/UserSelect'
 import { ComponentProps, useEffect } from 'react'
 import { useAddProject, useEditProject } from 'utils/project'
-import { useProjectModal } from './utils'
+import { useProjectModal, useProjectQueryKey } from './utils'
 type DrawerProps = ComponentProps<typeof Drawer>
 interface ProjectModalProps extends Omit<DrawerProps, 'visible' | 'onClose'> {}
 export const ProjectModal = ({ ...resetProps }: ProjectModalProps) => {
   const { projectModalOpen, close, editProject, isLoading } = useProjectModal()
   const useMutateProject = editProject ? useEditProject : useAddProject
 
-  const { mutateAsync, error, isLoading: mutateLoading } = useMutateProject()
+  const {
+    mutateAsync,
+    error,
+    isLoading: mutateLoading,
+  } = useMutateProject(useProjectQueryKey())
   const [form] = useForm()
   const onFinish = (values: any) => {
     mutateAsync({ ...editProject, ...values }).then(() => {
