@@ -2,7 +2,8 @@ import * as auth from 'authProvider'
 import { FullPageFallback, FullPageLoading } from 'components/lib'
 import { useAsync, useMount } from 'hooks'
 import React, { ReactNode, useContext } from 'react'
-import { User } from 'screens/ProjectList/SearchPanel'
+import { useQueryClient } from 'react-query'
+import { User } from 'types/User'
 import { http } from 'utils/http'
 type AuthContextType =
   | {
@@ -34,12 +35,14 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     run,
     setData: setUser,
   } = useAsync<User | null>()
+  const queryClient = useQueryClient()
   // const [user, setUser] = useState<User | null>(null)
   const login = (form: auth.LoginParam) => auth.login(form).then(setUser)
   const register = (form: auth.LoginParam) => auth.register(form).then(setUser)
   const loginout = () =>
     auth.loginout().then(() => {
       setUser(null)
+      queryClient.clear()
     })
 
   useMount(() => {

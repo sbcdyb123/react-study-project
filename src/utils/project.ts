@@ -4,7 +4,7 @@ import {
   useDeleteConfig,
 } from './useOptimisiticOptions'
 import { useHttp } from 'utils/http'
-import { Project } from 'screens/ProjectList/List'
+import { Project } from 'types/Project'
 import { QueryKey, useMutation, useQuery } from 'react-query'
 
 export const useProjects = (param?: Partial<Project>) => {
