@@ -1,4 +1,4 @@
-import { cleanObject } from './../utils/index'
+import { cleanObject, subset } from './../utils/index'
 import {
   useCallback,
   useEffect,
@@ -153,32 +153,37 @@ export const useDocumentTitle = (title: string, keepOnUnmount = true) => {
 }
 
 /**
- * @Date: 2021-07-26 22:13:01
- * @name: 方龙
- * @description: 返回页面url中，指定键的参数值
- * @param {*}
- * @return {*}
+ * 返回页面url中，指定键的参数值
  */
 export const useUrlQueryParam = <K extends string>(keys: K[]) => {
-  const [searchParams, setSearchParams] = useSearchParams()
+  const [searchParams] = useSearchParams()
+  const setSearchParams = useSetUrlSearchParam()
+  const [stateKeys] = useState(keys)
   return [
     useMemo(
       () =>
-        keys.reduce((prev, key) => {
-          return { ...prev, [key]: searchParams.get(key) || '' }
-        }, {} as { [key in K]: string }),
-      // eslint-disable-next-line react-hooks/exhaustive-deps
-      [searchParams],
+        subset(Object.fromEntries(searchParams), stateKeys) as {
+          [key in K]: string
+        },
+      [searchParams, stateKeys],
     ),
     (params: Partial<{ [key in K]: unknown }>) => {
-      const obj = cleanObject({
-        ...Object.fromEntries(searchParams),
-        ...params,
-      }) as URLSearchParamsInit
-      return setSearchParams(obj)
+      return setSearchParams(params)
+      // iterator
+      // iterator: https://codesandbox.io/s/upbeat-wood-bum3j?file=/src/index.js
     },
   ] as const
-  // as const 返回元组类型
+}
+
+export const useSetUrlSearchParam = () => {
+  const [searchParams, setSearchParam] = useSearchParams()
+  return (params: { [key in string]: unknown }) => {
+    const o = cleanObject({
+      ...Object.fromEntries(searchParams),
+      ...params,
+    }) as URLSearchParamsInit
+    return setSearchParam(o)
+  }
 }
 export const useMountedRef = () => {
   const mountedRef = useRef(false)
